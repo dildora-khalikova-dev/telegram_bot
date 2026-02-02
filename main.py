@@ -121,6 +121,16 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
         return
 
+    if text == "⬅️ Ortga":
+        user_states.pop(user_id, None)
+        user_orders.pop(user_id, None)
+
+        await update.message.reply_text(
+            "⬅️ Asosiy menyuga qaytdingiz.",
+            reply_markup=main_keyboard
+        )
+        return
+
     await update.message.reply_text("❗ Iltimos, menyudan foydalaning.")
 
 # ================= PHOTO ==================
