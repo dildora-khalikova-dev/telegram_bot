@@ -233,6 +233,25 @@ async def handle_admin_message(update: Update, context: ContextTypes.DEFAULT_TYP
     )
     del admin_reply_state[ADMIN_ID]
 
+async def handle_admin_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if update.effective_user.id != ADMIN_ID:
+        return
+
+    user_id = admin_reply_state.get(ADMIN_ID)
+    if not user_id:
+        return
+
+    photo_id = update.message.photo[-1].file_id
+    caption = update.message.caption or "📩 Admindan rasm"
+
+    await context.bot.send_photo(
+        chat_id=user_id,
+        photo=photo_id,
+        caption=caption
+    )
+
+    del admin_reply_state[ADMIN_ID]
+
 # ================= MAIN ===================
 def main():
     app = Application.builder().token(TOKEN).build()
@@ -244,6 +263,9 @@ def main():
     app.add_handler(MessageHandler(filters.CONTACT, handle_contact))
     app.add_handler(MessageHandler(filters.TEXT & filters.User(ADMIN_ID), handle_admin_message))
     app.add_handler(CallbackQueryHandler(handle_callback))
+    app.add_handler(
+        MessageHandler(filters.PHOTO & filters.User(ADMIN_ID), handle_admin_photo)
+    )
 
     app.run_polling()
 
